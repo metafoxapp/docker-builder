@@ -1,0 +1,8 @@
+# MetaFox docker compose
+services:
+  php:
+    build:
+      context: php
+      dockerfile: php-apt.Dockerfile
+      target: fpm # debug, fpm, swoole
+    restart: always
