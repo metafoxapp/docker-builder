@@ -40,7 +40,7 @@ jobs:
           file: ./php/backend-apt.Dockerfile
           push: true
           target: fpm
-          tags: $DOCKER_USER/php:fpm
+          tags: ${{ env.DOCKER_USER }}/php:fpm
 
       - name: Build swoole
         uses: docker/build-push-action@v3
@@ -50,4 +50,4 @@ jobs:
           file: ./php/backend-apt.Dockerfile
           push: true
           target: swoole
-          tags: $DOCKER_USER/php:swoole
+          tags: ${{ env.DOCKER_USER }}/php:swoole
