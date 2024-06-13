@@ -3,6 +3,6 @@ services:
   php:
     build:
       context: php
-      dockerfile: php-apt.Dockerfile
+      dockerfile: Dockerfile
       target: fpm # debug, fpm, swoole
     restart: always

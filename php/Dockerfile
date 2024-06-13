@@ -12,7 +12,11 @@ FROM php:${PHP_VERSION}-fpm as php_builder
 RUN apt-get update && apt-get install -y  \
     libzip-dev \
     libpng-dev \
+    zlib1g-dev \
+    libjpeg-dev \
+    libonig-dev \
     libicu-dev \
+    libssl-dev \
     gettext \
     libpq-dev \
     libldap-dev \
@@ -20,6 +24,7 @@ RUN apt-get update && apt-get install -y  \
     libmemcached-dev  \
     git \
     zip \
+    unzip \
     ffmpeg \
     postgresql-client \
     mariadb-client \
@@ -48,13 +53,18 @@ RUN apt-get update && apt-get install -y  \
     make -j$(nproc) \
     && make install \
     && pecl install imagick redis pcov xdebug \
-    && docker-php-ext-enable imagick redis igbinary memcached opcache \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install ftp zip gd \
+    && docker-php-ext-enable imagick redis igbinary memcached opcache ftp zip ldap \
     && docker-php-source delete \
     && apt-get clean \
     && apt-get purge -y --auto-remove
 
 # Copy composer lasted bin
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
+
+WORKDIR /app
 
 FROM php_builder as fpm
 
@@ -75,8 +85,6 @@ ENV OCTANE_TASK_WORKERS=auto
 ENV OCTANE_MAX_REQUEST=1024
 ENV MFOX_ENABLE_OCTANE=true
 ENV OCTANE_WATCH_MODE=false
-
-WORKDIR /app
 
 EXPOSE 9501
 
