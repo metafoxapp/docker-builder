@@ -35,9 +35,9 @@ jobs:
       - name: Build fpm
         uses: docker/build-push-action@v3
         with:
-          context: ./builder
+          context: ./php
           platforms: ${{ env.PLATFORMS }}
-          file: ./php/backend-apt.Dockerfile
+          file: ./php/Dockerfile
           push: true
           target: fpm
           tags: ${{ env.DOCKER_USER }}/php:fpm
@@ -47,7 +47,7 @@ jobs:
         with:
           context: ./php
           platforms: ${{ env.PLATFORMS }}
-          file: ./php/backend-apt.Dockerfile
+          file: ./php/Dockerfile
           push: true
           target: swoole
           tags: ${{ env.DOCKER_USER }}/php:swoole
