@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"outDir": "build",
+		"target": "es6",
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"types": [
+			"node",
+			"bullmq"
+		]
+	},
+	"include": [
+		"src"
+	]
+}
