@@ -17,7 +17,7 @@ ENV PROXY_PATH ''
 
 RUN npm i -g pm2
 
-RUN npm install --save
+RUN npm install
 
 COPY . .
 
