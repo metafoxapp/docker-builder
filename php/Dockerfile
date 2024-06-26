@@ -61,6 +61,8 @@ RUN apt-get update && apt-get install -y  \
     && apt-get clean \
     && apt-get purge -y --auto-remove
 
+RUN sed -i 's/www-data/daemon/g' /usr/local/etc/php-fpm.d/www.conf
+
 # Copy composer lasted bin
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
@@ -68,7 +70,6 @@ WORKDIR /app
 
 FROM php_builder as fpm
 
-USER $USER_UID
 # ENTRYPOINT ["/usr/local/bin/supervisor-entrypoint.sh"]
 
 FROM php_builder as swoole
@@ -88,7 +89,6 @@ ENV MFOX_ENABLE_OCTANE=true
 ENV OCTANE_WATCH_MODE=false
 
 EXPOSE 9501
-USER $USER_UID
 
 ## add node support
 COPY --from=node_builder /usr/local/bin /usr/local/bin
@@ -99,7 +99,6 @@ FROM php_builder as debug
 RUN pecl channel-update pecl.php.net \
     && pecl install xdebug
 
-USER $USER_UID
 
 
 
