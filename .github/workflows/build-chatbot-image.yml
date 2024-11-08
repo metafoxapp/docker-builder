@@ -1,19 +1,15 @@
 name: Build Chatbot Image
+
+concurrency:
+  group: Build Chatbot Image
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: build tags
-        type: choice
-        options:
-          - develop
-          - latest
-        required: true
-        default: develop
 
 env:
   DOCKER_USER: foxsystem
-  PLATFORMS: linux/amd64
+  PLATFORMS: linux/amd64, linux/arm64
 
 jobs:
   build:
