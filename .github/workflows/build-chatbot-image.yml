@@ -27,16 +27,6 @@ jobs:
       - name: Setup
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Api
-        uses: docker/build-push-action@v3
-        with:
-          context: ./chatbot
-          platforms: ${{ env.PLATFORMS }}
-          file: ./chatbot/dockerfile
-          push: true
-          target: api
-          tags: ${{ env.DOCKER_USER }}/chatbot-api:latest
-
       - name: Build Api Dev
         uses: docker/build-push-action@v3
         with:
@@ -46,6 +36,16 @@ jobs:
           push: true
           target: api_dev
           tags: ${{ env.DOCKER_USER }}/chatbot-api:dev
+
+      - name: Build Api
+        uses: docker/build-push-action@v3
+        with:
+          context: ./chatbot
+          platforms: ${{ env.PLATFORMS }}
+          file: ./chatbot/dockerfile
+          push: true
+          target: api
+          tags: ${{ env.DOCKER_USER }}/chatbot-api:latest
 
       - name: Build Worker
         uses: docker/build-push-action@v3

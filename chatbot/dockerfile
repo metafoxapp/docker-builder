@@ -23,7 +23,7 @@ ENV FLASK_RUN_PORT=8502
 #*************************************************************************************
 # api dev service
 #*************************************************************************************
-FROM builder AS api_dev
+FROM builder:latest AS api_dev
 
 EXPOSE 8502
 
@@ -34,7 +34,7 @@ ENTRYPOINT ["flask", "run", "--port=8502", "--host=0.0.0.0"]
 
 #*************************************************************************************
 # api production
-FROM builder AS api
+FROM builder:latest AS api
 #*************************************************************************************
 
 EXPOSE 8502
@@ -47,7 +47,7 @@ ENTRYPOINT ["gunicorn",  "--workers", "4", "--bind", "0.0.0.0:8502", "project:cr
 #*************************************************************************************
 # flower service
 #*************************************************************************************
-FROM builder AS flower
+FROM builder:latest AS flower
 
 EXPOSE 8504
 ENV FLASK_RUN_PORT=8052
@@ -57,7 +57,7 @@ ENTRYPOINT ["celery", "flower", "--address=0.0.0.0","-A", "make_celery", "--port
 
 ###########################################################################################################
 # worker service
-FROM builder AS worker
+FROM builder:latest AS worker
 ###########################################################################################################
 
 ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
@@ -66,13 +66,13 @@ ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
 # Socket io service
 #*************************************************************************************
 
-FROM builder AS socketio
+FROM builder:latest AS socketio
 EXPOSE 8503
 ENTRYPOINT ["gunicorn", "--workers=1", "--worker-class=eventlet",  "--bind=0.0.0.0:8503", "wsgi:app"]
 
 #*************************************************************************************
 # scheduler service
 #*************************************************************************************
-FROM builder AS scheduler
+FROM builder:latest AS scheduler
 
 ENTRYPOINT ["celery", "-A", "make_celery", "beat"]
