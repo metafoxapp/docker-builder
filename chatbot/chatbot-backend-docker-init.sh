@@ -3,7 +3,7 @@
 if [[ $CHATBOT_ENV == "api" ]]; then
   if [[ $FLASK_ENV == "development" ]]; then
     export FLASK_DEBUG=1
-    flask run --port=8505 --host="0.0.0.0"
+    flask run --port=8502 --host="0.0.0.0"
   else
     export FLASK_DEBUG=0
     export FLASK_ENV=production
