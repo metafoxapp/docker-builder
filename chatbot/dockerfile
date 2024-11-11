@@ -1,6 +1,6 @@
 # app/Dockerfile
 
-FROM python:3.10-bookworm as builder
+FROM python:3.10-bookworm as backend
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -13,9 +13,11 @@ WORKDIR /app
 VOLUME /user_files
 
 COPY requirements.txt requirements.txt
+COPY chatbot-backend-docker-init.sh /usr/local/bin/chatbot-backend-docker-init.sh
 
 RUN pip install -r requirements.txt
 
+ENV CHATBOT_ENV=api
 ENV FLASK_APP=project
 ENV FLASK_RUN_PORT=8502
 ENV FLASK_ENV=production
@@ -24,26 +26,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV ANONYMIZED_TELEMETRY=False
 ENV FILES_DIR=/user_files
 
-FROM builder AS api
-EXPOSE 8502
-ENTRYPOINT ["gunicorn",  "--workers", "4", "--bind", "0.0.0.0:8502", "project:create_app()"]
+EXPOSE 8502 8503 8504
 
-FROM builder as api_dev
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=1
-EXPOSE 8502
-ENTRYPOINT ["flask", "run", "--port=8502", "--host=0.0.0.0"]
-
-FROM builder as socketio
-EXPOSE 8503
-ENTRYPOINT ["gunicorn", "--workers=1", "--worker-class=eventlet",  "--bind=0.0.0.0:8503", "wsgi:app"]
-
-FROM builder as worker
-ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
-
-FROM builder as flower
-EXPOSE 8504
-ENTRYPOINT ["celery", "flower", "--address=0.0.0.0", "-A", "make_celery", "--port=8504"]
-
-FROM builder as scheduler
-ENTRYPOINT ["celery", "-A", "make_celery", "beat", "-l", "info"]
+ENTRYPOINT chatbot-backend-docker-init.sh
