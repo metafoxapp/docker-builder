@@ -20,5 +20,5 @@ if [[ $CHATBOT_ENV == "worker" ]]; then
 fi
 
 if [[ $CHATBOT_ENV == "scheduler" ]]; then
-  celery -A make_celery beat -l info -E
+  celery -A make_celery beat -l info
 fi
