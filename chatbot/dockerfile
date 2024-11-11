@@ -6,8 +6,6 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     software-properties-common \
     curl \
-    git \
-    supervisor \
     && pip install --upgrade pip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,15 +26,22 @@ ENV FILES_DIR=/user_files
 
 EXPOSE 8502 8503 8504
 
-# API
-ENTRYPOINT ["flask", "run", "--port=8502", "--host=0.0.0.0"]
-# Worker
-# ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
-# Flower
-# ENTRYPOINT ["celery", "flower", "--address=0.0.0.0","-A", "make_celery", "--port=8504"]
-# Socketio
-# ENTRYPOINT ["gunicorn", "--workers=1", "--worker-class=eventlet",  "--bind=0.0.0.0:8503", "wsgi:app"]
-# Scheduler
-# ENTRYPOINT ["celery", "-A", "make_celery", "beat", "-l", "info"]
+FROM builder AS api
+ENTRYPOINT ["gunicorn",  "--workers", "4", "--bind", "0.0.0.0:8502", "project:create_app()"]
 
-FROM builder as backend
+FROM builder as api_dev
+ENV FLASK_ENV=development
+ENV FLASK_DEBUG=1
+ENTRYPOINT ["flask", "run", "--port=8502", "--host=0.0.0.0"]
+
+FROM builder as socketio
+ENTRYPOINT ["gunicorn", "--workers=1", "--worker-class=eventlet",  "--bind=0.0.0.0:8503", "wsgi:app"]
+
+FROM builder as worker
+ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
+
+FROM builder as flower
+ENTRYPOINT ["celery", "flower", "--address=0.0.0.0","-A", "make_celery", "--port=8504"]
+
+FROM builder as scheduler
+ENTRYPOINT ["celery", "-A", "make_celery", "beat", "-l", "info"]
