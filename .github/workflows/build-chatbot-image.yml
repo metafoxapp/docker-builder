@@ -34,7 +34,7 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
           file: ./chatbot/dockerfile
           push: true
-          target: api
+          target: backend
           tags: ${{ env.DOCKER_USER }}/chatbot-backend:latest
 
       # - name: Build Api Dev

@@ -1,6 +1,6 @@
 # app/Dockerfile
 
-FROM python:3.10-bookworm AS builder
+FROM python:3.10-bookworm as builder
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+VOLUME /user_files
 
 COPY requirements.txt requirements.txt
 
@@ -19,60 +20,23 @@ RUN pip install -r requirements.txt
 
 ENV FLASK_APP=project
 ENV FLASK_RUN_PORT=8502
-
-#*************************************************************************************
-# api dev service
-#*************************************************************************************
-FROM builder AS api_dev
-
-EXPOSE 8502
-
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=1
-
-ENTRYPOINT ["flask", "run", "--port=8502", "--host=0.0.0.0"]
-
-#*************************************************************************************
-# api production
-FROM builder AS api
-#*************************************************************************************
-
-EXPOSE 8502
-
 ENV FLASK_ENV=production
+ENV FLASK_DEBUG=0
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV ANONYMIZED_TELEMETRY=False
+ENV FILES_DIR=/user_files
 
-# execute gunicorn --workers 2 --bind 0.0.0.0:8502 'project:create_app()'
-ENTRYPOINT ["gunicorn",  "--workers", "4", "--bind", "0.0.0.0:8502", "project:create_app()"]
+EXPOSE 8502 8503 8504
 
-#*************************************************************************************
-# flower service
-#*************************************************************************************
-FROM builder AS flower
+# API
+ENTRYPOINT ["flask", "run", "--port=8502", "--host=0.0.0.0"]
+# Worker
+# ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
+# Flower
+# ENTRYPOINT ["celery", "flower", "--address=0.0.0.0","-A", "make_celery", "--port=8504"]
+# Socketio
+# ENTRYPOINT ["gunicorn", "--workers=1", "--worker-class=eventlet",  "--bind=0.0.0.0:8503", "wsgi:app"]
+# Scheduler
+# ENTRYPOINT ["celery", "-A", "make_celery", "beat", "-l", "info"]
 
-EXPOSE 8504
-ENV FLASK_RUN_PORT=8052
-ENV FLASK_APP=project
-
-ENTRYPOINT ["celery", "flower", "--address=0.0.0.0","-A", "make_celery", "--port=8504"]
-
-###########################################################################################################
-# worker service
-FROM builder AS worker
-###########################################################################################################
-
-ENTRYPOINT ["celery", "-A", "make_celery", "worker", "-l", "info", "-E"]
-
-#*************************************************************************************
-# Socket io service
-#*************************************************************************************
-
-FROM builder AS socketio
-EXPOSE 8503
-ENTRYPOINT ["gunicorn", "--workers=1", "--worker-class=eventlet",  "--bind=0.0.0.0:8503", "wsgi:app"]
-
-#*************************************************************************************
-# scheduler service
-#*************************************************************************************
-FROM builder AS scheduler
-
-ENTRYPOINT ["celery", "-A", "make_celery", "beat"]
+FROM builder as backend
