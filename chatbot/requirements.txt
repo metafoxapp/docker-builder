@@ -195,3 +195,4 @@ user_agents>=0.10.0
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+boto3
