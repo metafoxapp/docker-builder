@@ -196,4 +196,4 @@ google-auth-httplib2
 google-auth-oauthlib
 boto3
 bunch
-flask-pywebpush
+pywebpush
