@@ -48,3 +48,4 @@ bunch
 pywebpush
 click
 fastapi
+Pillow
