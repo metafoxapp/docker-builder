@@ -1,6 +1,6 @@
 # app/Dockerfile
 
-FROM python:3.10-bookworm as backend
+FROM python:3.10-bookworm AS backend
 
 # RUN apt-get update && apt-get install -y \
 #     build-essential \
