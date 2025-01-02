@@ -44,7 +44,6 @@ tzlocal==5.2
 websockets==14.1
 user_agents>=0.10.0
 boto3
-bunch
 pywebpush
 click
 fastapi
