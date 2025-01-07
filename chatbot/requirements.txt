@@ -43,8 +43,8 @@ toml==0.10.2
 tzlocal==5.2
 websockets==14.1
 user_agents>=0.10.0
+pypdf
 boto3
 pywebpush
 click
 fastapi
-Pillow
