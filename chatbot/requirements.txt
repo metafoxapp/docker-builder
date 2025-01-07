@@ -48,3 +48,4 @@ boto3
 pywebpush
 click
 fastapi
+Pillow
