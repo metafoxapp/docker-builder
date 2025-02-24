@@ -49,3 +49,4 @@ pywebpush
 click
 fastapi
 Pillow
+lxml==5.3.1
