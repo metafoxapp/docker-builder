@@ -18,9 +18,10 @@ eventlet==0.35.2
 gunicorn==22.0.0
 huggingface-hub==0.27.0
 json_repair==0.20.1
-langchain==0.3.13
-langchain-core==0.3.35
+langchain==0.3.19
+langchain-core==0.3.40
 langchain-experimental==0.3.4
+langchain-community==0.3.18
 langchain-openai==0.3.6
 langchain-ollama==0.2.2
 langchain-chroma==0.1.4
