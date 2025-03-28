@@ -30,7 +30,6 @@ marshmallow==3.20.1
 neo4j==5.27.0
 openai==1.64.0
 psycopg2-binary>=2.9.9
-pyarrow==14.0.2
 pydantic
 PyJWT==2.8.0
 python-dateutil==2.8.2
@@ -51,3 +50,4 @@ click
 fastapi
 Pillow
 lxml==5.3.1
+pkce>=1.0.3
