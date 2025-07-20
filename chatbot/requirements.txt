@@ -54,4 +54,4 @@ pkce>=1.0.3
 docx2txt
 markdown
 pytest
-flask-pytest
+pytest-flask
